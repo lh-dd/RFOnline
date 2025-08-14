@@ -1,0 +1,35 @@
+Hex			String		Count
+
+25642E6C6F67		%d.log		(68 occurrences)
+replace with:
+25752E6C6F67		%u.log
+
+
+25642E4C6F67		%d.Log		(1 occurrence, capital L)
+replace with:
+25752E6C6F67		%u.log
+
+
+25645F552E6C6F67	%d_U.log	(4 occurrences)
+replace with:
+25755F552E6C6F67	%u_U.log
+
+
+25645F412E6C6F67	%d_A.log	(4 occurrences)
+replace with:
+25755F412E6C6F67	%u_A.log
+
+
+25735C4775696C640000000025735C2564	%s\Guild   %s\%d	(1 occurence)
+replace with:
+25735C4775696C640000000025735C2575	%s\Guild   %s\%u
+
+
+53686F705F25642E737973		Shop_%d.sys	(1 occurence)
+replace with:
+53686F705F25752E737973		Shop_%u.sys
+
+
+53686F705F25642E707263		Shop_%d.prc	(1 occurence)
+replace with:
+53686F705F25752E707263		Shop_%u.prc
