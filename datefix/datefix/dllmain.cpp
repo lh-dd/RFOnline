@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <iostream>
-#include "MinHook.h"
+#include "include/MinHook.h"
 #include <time.h>
 
 // Original function pointers
