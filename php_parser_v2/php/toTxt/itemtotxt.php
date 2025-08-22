@@ -32,7 +32,7 @@ $childcnt=0;
 $type=0;
 for($j=0; $j < sizeof($struct_load); $j++)
 {
-	$temp= split(" ", trim($struct_load[$j]));
+	$temp= explode(" ", trim($struct_load[$j]));
 	if($temp[0]!="child" && $start==0)
 		continue;
 	elseif($temp[0]=="child"){
@@ -134,7 +134,15 @@ for($a=0;$a < 46;$a++){
 					}
 					else
 						$number = unpack($typearr[$b][$l], $data[$k][$l]);
-					if($typearr[$b][$l] == "H*" && $l == 4 && $a < 44)
+					if ($typearr[$b][$l] === "I" && $number[1] > 0x7FFFFFFF) //php 5 style for udword "I" unsigned 32-bit
+					{
+        					$number[1] -= 0x100000000;
+    					}
+					if ($typearr[$b][$l] === "f" || $typearr[$b][$l] === "d") //php 5 style for significant decimal length
+					{
+            					$number[1] = sprintf("%.12g", $number[1]);
+        				}
+					elseif($typearr[$b][$l] == "H*" && $l == 4 && $a < 44)
 						$number[1] = xehconv($number[1]);
 					fwrite($fmd5, "$number[1]\t");
 				}
@@ -218,7 +226,7 @@ for($a=0;$a < 44 ;$a++){
 	$fmd5 = fopen($installpath."unpacker\\clientsource\\".$a."name.txt","w+");
 	for($i=0;$i < $count[1];$i++){
 		$data[$i][0] = fread($fp, 64);
-		$number = unpack("a*", $data[$i][0]);
+		$number = unpack("Z*", $data[$i][0]);
 		fwrite($fmd5, "$number[1]\r\n");
 	}
 		
@@ -242,7 +250,7 @@ for($a=0;$a < 46 ;$a++){
 		$data[$i][3] = fread($fp, $len[1]);
 		$number0 = unpack("i", $data[$i][0]);
 		//$number1 = unpack("H*", $data[$i][1]);
-		$number3 = unpack("a*", $data[$i][3]);
+		$number3 = unpack("Z*", $data[$i][3]);
 		fwrite($fmd5, "$number0[1]\t");
 		//fwrite($fmd5, "$number1[1]\t");
 		fwrite($fmd5, "$number3[1]\r\n");
@@ -267,8 +275,8 @@ fclose($fmd5);
 		$len = unpack("i", $data[$i][2]);
 		$data[$i][3] = fread($fp, $len[1]);
 		$number0 = unpack("i", $data[$i][0]);
-		$number1 = unpack("a*", $data[$i][1]);
-		$number3 = unpack("a*", $data[$i][3]);
+		$number1 = unpack("Z*", $data[$i][1]);
+		$number3 = unpack("Z*", $data[$i][3]);
 		fwrite($fmd5, "$number0[1]\t");
 		fwrite($fmd5, "$number1[1]\t");
 		fwrite($fmd5, "$number3[1]\r\n");

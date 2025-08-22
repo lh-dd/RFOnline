@@ -265,10 +265,13 @@ for($a=0;$a < $count[1]; $a++)
 	$pos = strpos($raw, $findme);
 	$pos = ($pos == 0) ? "*" : $pos;
 	$data[119] = unpack("a".$pos, $raw);
-	for($i = 1; $i < 120; $i++)
-	{
-		fwrite($file, $data[$i][1]."\t");
-	}		
+	for($i = 1; $i < 120; $i++) {
+    	if (isset($data[$i][1])) {
+        	fwrite($file, $data[$i][1] . "\t");
+    	} else {
+        	fwrite($file, "\t");
+    	}	
+    }	
 	fwrite($file, "\r\n");
 }
 fclose($file);
@@ -330,6 +333,12 @@ for($a=0;$a < $count[1]; $a++)
 	$data[12] = unpack("i", $nattrangetype);
 	$fAttExt = fread($fp, 4);
 	$data[13] = unpack("f", $fAttExt);
+	$floatVal = $data[13][1];
+	if (abs(fmod($floatVal, 1.0)) < 1e-12) {
+    	$data[13][1] = (string)(int)$floatVal;
+	} else {
+		$data[13][1] = sprintf('%.12g', $floatVal); //use php 5 style: up to 12 significant digits
+	}
 	$data[13][1] = strtr($data[13][1], $trans);
 	$nmovspd = fread($fp, 1);
 	$data[14] = unpack("c", $nmovspd);
@@ -341,6 +350,12 @@ for($a=0;$a < $count[1]; $a++)
 	$data[17] = unpack("c", $nnone2);
 	$fsizerate = fread($fp, 4);
 	$data[18] = unpack("f", $fsizerate);
+	$floatVal = $data[18][1];
+	if (abs(fmod($floatVal, 1.0)) < 1e-12) {
+    	$data[18][1] = (string)(int)$floatVal;
+	} else {
+		$data[18][1] = sprintf('%.12g', $floatVal); //use php 5 style: up to 12 significant digits
+	}
 	$data[18][1] = strtr($data[18][1], $trans);
 	$nhz4 = fread($fp, 4);
 	$data[19] = unpack("i", $nhz4);
