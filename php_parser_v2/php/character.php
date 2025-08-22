@@ -17,8 +17,8 @@ $fcnt = 0;
 
 for($i = 2; $i < $schet1; $i++)
 {
-	$class = split("\t", trim($file_load1[$i]));
-	$class2 = split("\t", trim($file_load2[$i]));
+	$class = explode("\t", trim($file_load1[$i]));
+	$class2 = explode("\t", trim($file_load2[$i]));
 	$ittype = array(0=>"ff000000",1=>"ff000000",2=>"ff000000",3=>"ff000000",4=>"ff000000",5=>"ff000000",6=>"ff000000",7=>"ff000000",8=>"ff000000");
 	$itnum = array(0=>"-1",1=>"-1",2=>"-1",3=>"-1",4=>"-1",5=>"-1",6=>"-1",7=>"-1",8=>"-1",9=>"-1");
 	fwrite($fo, "\r\n".$class[2]."\t".$class[4]."\t0\t".$fcnt."\t".$class[0]."\t".$class[0]);
@@ -101,7 +101,7 @@ if(defined('GU'))
 	$ai = file($installpath."in\\Character.edf\\MonsterCharacterAI.txt", FILE_SKIP_EMPTY_LINES);
 	for($i = 2; $i < sizeof($ai); $i++)
 	{
-		$tempai = split("\t", trim($ai[$i]));
+		$tempai = explode("\t", trim($ai[$i]));
 		$monai[$tempai[0]][0]=$tempai[1];
 		$monai[$tempai[0]][1]=$tempai[2];
 	}
@@ -236,7 +236,7 @@ if(!$stop)
 		$ptfilearr = array(0=>"war.txt", 1=>"ran.txt", 2=>"spr.txt", 3=>"spc.txt");
 		$filear = file($installpath."in\\Character.edf\\".$ptfilearr[0], FILE_SKIP_EMPTY_LINES);
 		$filesi = sizeof($filear);
-		$stru = split("\t", trim($filear[0]));
+		$stru = explode("\t", trim($filear[0]));
 		$block = strsize($stru);
 		$schethex = pack("i", (($filesi-2)*4));
 		fwrite($fp, "$schethex");
@@ -277,7 +277,7 @@ if(!$stop)
 		$ptfilearr = array(0=>"CPai.txt", 1=>"CHec.txt", 2=>"CIna.txt", 3=>"CIsi.txt", 4=>"CSPai.txt", 5=>"CSHec.txt", 6=>"CSIna.txt", 7=>"CSIsi.txt");
 		$filear = file($installpath."in\\Character.edf\\".$ptfilearr[0], FILE_SKIP_EMPTY_LINES);
 		$filesi = sizeof($filear);
-		$stru = split("\t", trim($filear[0]));
+		$stru = explode("\t", trim($filear[0]));
 		$block = strsize($stru);
 		$schethex = pack("i", (($filesi-2)*8));
 		fwrite($fp, "$schethex");
@@ -316,7 +316,7 @@ if(!$stop)
 			fwrite($fp, "$blockhex");
 			for($j=2; $j < $schet; $j++)
 			{			
-				$temporary = split("\t", trim($struct_load[$j],"\t\r\n"));
+				$temporary = explode("\t", trim($struct_load[$j],"\t\r\n"));
 				$resulthex=pack("a32", $temporary[16]).pack("a1024", $temporary[109]);
 				fwrite($fp, $resulthex);
 			}
@@ -344,7 +344,7 @@ if(!$stop)
 			fwrite($fp, "$blockhex");
 			for($j=2; $j < $schet; $j++)
 			{			
-				$temporary = split("\t", trim($struct_load[$j],"\t\r\n"));
+				$temporary = explode("\t", trim($struct_load[$j],"\t\r\n"));
 				if(strlen($temporary[1]) >= 32)
 				{
     			$temporary[1] = substr($temporary[1], 0, 31);

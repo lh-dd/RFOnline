@@ -474,7 +474,7 @@ function resource($code)
     $tmp = '';
     for($i = 2; $i < sizeof($file_load2); $i++)
     {
-        $upg[$i]=split("\t", trim($file_load2[$i]));
+        $upg[$i]=explode("\t", trim($file_load2[$i]));
     }
     for($j = 2; $j < sizeof($file_load2); $j++)
     {
@@ -651,8 +651,8 @@ function parser($output, $input, $indexing, $blockheader)
     global $typearr, $stop_error_msg;
     $filearray = file($input, FILE_SKIP_EMPTY_LINES);
     $filesize = sizeof($filearray);
-    $struct = split("\t", trim($filearray[0]));
-    $col_names = split("\t", trim($filearray[1]));
+    $struct = explode("\t", trim($filearray[0]));
+    $col_names = explode("\t", trim($filearray[1]));
     if($blockheader == 1)
     {
         $block = strsize($struct);
@@ -666,7 +666,7 @@ function parser($output, $input, $indexing, $blockheader)
     for($i = 2; $i < $filesize; $i++)
     {
         $store = 0;
-        $temporary = split("\t", trim($filearray[$i]));
+        $temporary = explode("\t", trim($filearray[$i]));
         if($indexing == 1)
             fwrite($output, pack("i", $i - 2));
         for($st = 0; $st < count($struct) - 1; $st++)
@@ -780,7 +780,8 @@ function parser($output, $input, $indexing, $blockheader)
                     $resulthex = lqitem($temporary[$st]);
                     break;
                 case "store":
-                    if(($resulthex = store($temporary[$st], $store, $temporary[10])) === false)
+		    $maxVal = isset($temporary[10]) ? $temporary[10] : "0";
+		    if (($resulthex = store($temporary[$st], $store, $maxVal)) === false)
                     {
                         $stop_error_msg .= " Probably mistake at excel file:<br>ROW:".($i+1)."<br>COLUMN:".($st+1)."<br>NAME:".$col_names[$st]."<br>DATA:".$temporary[$st];
                         return false;
@@ -941,7 +942,7 @@ function qitid($code)
     global $installpath, $stop;
     $fl = file($installpath."in\\Quest.edf\\QuestItem.txt", FILE_SKIP_EMPTY_LINES);
     $r = 2;
-    $trow = split("\t", trim($fl[$r]));
+    $trow = explode("\t", trim($fl[$r]));
     if($code == "-1" || $code == "0")
     {
         $tmp = pack("i", "-1");
@@ -952,7 +953,7 @@ function qitid($code)
         while($code != $trow[0] && $r != sizeof($fl))
         {
             $r++;
-            $trow = split("\t", trim($fl[$r]));
+            $trow = explode("\t", trim($fl[$r]));
         }
         if($r == sizeof($fl))
         {
@@ -1020,7 +1021,7 @@ function totxt($input, $count, $output, $struct, $skip_index = true, $skip_heade
 
     $fw = fopen($output, "w+");
     $strfile = file($struct, FILE_SKIP_EMPTY_LINES);
-    $str = split("\t", trim($strfile[0]));
+    $str = explode("\t", trim($strfile[0]));
     fwrite($fw, $strfile[0].$strfile[1]);
     if($skip_header)
         fseek($input, 8, SEEK_CUR);
@@ -1031,16 +1032,15 @@ function totxt($input, $count, $output, $struct, $skip_index = true, $skip_heade
         for($j = 0; $j < count($str) - 1; $j++)
         {
             preg_match("/^(string\[)?([\d]+)/", $str[$j], $str_ret);
-            if($str_ret[1] == "string[")
-            {
-                $indata = fread($input, $str_ret[2]);
-                $findme = "\x00";
-                $pos = strpos($indata, $findme);
-                $pos = ($pos == 0) ? "*" : $pos;
-                $unpdata = unpack("a".$pos, $indata);
-                fwrite($fw, $unpdata[1]."\t");
-                continue;
-            }
+            if (!empty($str_ret[1]) && $str_ret[1] === "string[") {
+    		$indata = fread($input, $str_ret[2]);
+    		$findme = "\x00";
+    		$pos = strpos($indata, $findme);
+    		$pos = ($pos === 0) ? "*" : $pos;
+    		$unpdata = unpack("a".$pos, $indata);
+    		fwrite($fw, $unpdata[1]."\t");
+    		continue;
+	}
             if($typearr[$str[$j]]['type'] == "qword" || $typearr[$str[$j]]['type'] == "xeh64")
             {
                 $indata = fread($input, 8);
@@ -1060,9 +1060,14 @@ function totxt($input, $count, $output, $struct, $skip_index = true, $skip_heade
             $unpdata = unpack($typearr[$str[$j]]['type'], $indata);
             if($typearr[$str[$j]]['type'] == "f" || $typearr[$str[$j]]['type'] == "d")
             {
-                $trans = array("." => ",");
-                $unpdata[1] = strtr("".$unpdata[1]."", $trans);
-            }
+    		$floatVal = (float)$unpdata[1];
+
+    		if (fmod($floatVal, 1.0) === 0.0) {
+        		$unpdata[1] = (string)(int)$floatVal;
+    		} else {
+        		$unpdata[1] = sprintf('%.12g', $floatVal);//use php 5 style: up to 12 significant digits
+    		}
+		}
             fwrite($fw, $unpdata[1]."\t");
         }
         fwrite($fw, "\r\n");
@@ -1241,7 +1246,7 @@ function proceed($path)
     global $installpath, $stop_error_msg;
     $stop = false;
     $spt = "\\\\";
-    $arr = split($spt, trim($path));
+    $arr = explode($spt, trim($path));
     $max = (count($arr) - 1);
     if(!$stop)
     {
@@ -1250,11 +1255,11 @@ function proceed($path)
         $struct_load = file($decrypt, FILE_SKIP_EMPTY_LINES);
         $schet = sizeof($struct_load);
         fwrite($fp, pack("i", ($schet-2)));
-        $row = split("\t", trim($struct_load[0]));
+        $row = explode("\t", trim($struct_load[0]));
         fwrite($fp, pack("i", count($row)));
         $block = strsize($row) + 4;
         $blockhex = pack("i", $block);
-        fwrite($fp, "$blockhex");
+        fwrite($fp, $blockhex);
         if(!parser($fp, $decrypt, 1, 0))
         {
             die($stop_error_msg);
@@ -1277,7 +1282,7 @@ function proceed($path)
             }
             for($i = 2; $i < $schet; $i++)
             {
-                $row = split("\t", trim($struct_load[$i]));
+                $row = explode("\t", trim($struct_load[$i]));
                 //fwrite($fp, pack("i", ($i-2)).pack("a64", $row[0]).pack("a64", " ").pack("a64", " ").pack("a64", " ").pack("a64", " ").pack("a64", " ").pack("a64", " ").pack("a64", " ").pack("a64", $row[$pos]).pack("a64", " "));
                 fwrite($fp, pack("i", ($i-2)).pack("a64", $row[0]).pack("a64", " ").pack("a64", " ").pack("a64", " ").pack("a64", $row[$pos]).pack("a64", " ").pack("a64", " ").pack("a64", " ").pack("a64", " ").pack("a64", " "));
                 if(defined('GU'))

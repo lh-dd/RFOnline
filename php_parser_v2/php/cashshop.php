@@ -37,7 +37,7 @@ fwrite($cliopen, pack("i", 64));
 
 for($i = 2; $i < $loadrows; $i++)
 {
-	$row = split("\t", trim($load[$i]));
+	$row = explode("\t", trim($load[$i]));
 	$tosrv = pack("i", ($i-2)).pack("a64", $row[0]).pack("a64", $row[1]).pack("i", $row[2]).pack("i", $row[3]).pack("a64", $row[4]).pack("i", $row[5]).pack("i", $row[6]).pack("i", $row[7]).pack("i", $row[8]).pack("i", $row[9]).pack("i", $row[10]).pack("i", $row[11]).pack("i", $row[12]).pack("i", $row[13]);
 	$tostr = pack("i", ($i-2)).pack("a64", $row[0]).pack("H56", "00000000000000000000000000000000000000000000000000000000").pack("i", $row[2]).pack("H8", "00000000");
 	if(defined('GU'))
@@ -53,7 +53,7 @@ for($i = 2; $i < $loadrows; $i++)
 		$tondc = pack("i", $row[2]);
 		fwrite($ndcopen, $tondc);
 	}*/
-	$fixarr = split("/", $row[4]);
+	$fixarr = explode("/", $row[4]);
 	$fix = 0;
 	if($fixarr[0] != "0")
 		$fix = $fix + 16;
