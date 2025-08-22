@@ -780,8 +780,8 @@ function parser($output, $input, $indexing, $blockheader)
                     $resulthex = lqitem($temporary[$st]);
                     break;
                 case "store":
-		    $maxVal = isset($temporary[10]) ? $temporary[10] : "0";
-		    if (($resulthex = store($temporary[$st], $store, $maxVal)) === false)
+                    $maxVal = isset($temporary[10]) ? $temporary[10] : "0";
+                    if (($resulthex = store($temporary[$st], $store, $maxVal)) === false)
                     {
                         $stop_error_msg .= " Probably mistake at excel file:<br>ROW:".($i+1)."<br>COLUMN:".($st+1)."<br>NAME:".$col_names[$st]."<br>DATA:".$temporary[$st];
                         return false;

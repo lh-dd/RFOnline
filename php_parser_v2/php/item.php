@@ -62,11 +62,11 @@ else
     $fra = array();
 	for($i = 2; $i < $scfram; $i++)
 	{
-		$fra[$i]=split("\t", trim($file_frame[$i]));
+		$fra[$i]=explode("\t", trim($file_frame[$i]));
 	}
 	for($i = 2; $i < $sckeyi; $i++)
 	{	
-		$key[$i]=split("\t", trim($file_keyit[$i]));
+		$key[$i]=explode("\t", trim($file_keyit[$i]));
 	}	
 	for($i = 2; $i < $sckeyi; $i++)
 	{	
@@ -87,7 +87,7 @@ else
 			$itemserial = 0;
 			for($k = 2; $k < $schet; $k++)
 			{
-				$frow = split("\t", trim($file_load[$k]));							
+				$frow = explode("\t", trim($file_load[$k]));							
 				if($fra[$i][$z + $j] == $frow[0])
 				{
 					fwrite($fo, $itemserial."\t");
@@ -145,7 +145,7 @@ else
 		$ndnum = array(0=>"0",1=>"0",2=>"0");
 		$itcode = array(0=>"ffffffff",1=>"ffffffff",2=>"ffffffff");
         $needitem = array();
-		$gti = split("\t", trim($file_load1[$i]));
+		$gti = explode("\t", trim($file_load1[$i]));
 		if($gti[$z] != "0" && $gti[$z] != "-1")
 		{
 			$needitem[$neednum] = $gti[$z];
@@ -184,7 +184,7 @@ else
 			$itemserial = 0;			
 			for($d = 2; $d < $gtfsz; $d++)
 			{
-				$gttcl = split("\t", trim($opentmp[$d]));				
+				$gttcl = explode("\t", trim($opentmp[$d]));				
 				if($needitem[$c] == $gttcl[0])
 				{
 					$itindex[$c] = $itemserial;
@@ -231,7 +231,7 @@ else
 	for($i = 2; $i < $schet1; $i++)
 	{
 		$neednum = 0;
-		$imd = split("\t", trim($file_load1[$i]));
+		$imd = explode("\t", trim($file_load1[$i]));
 		$ittype = array(0=>"0",1=>"0",2=>"0",3=>"0",4=>"0");
 		$itindex = array(0=>"0",1=>"0",2=>"0",3=>"0",4=>"0");
 		$ndnum = array(0=>"0",1=>"0",2=>"0",3=>"0",4=>"0");
@@ -286,7 +286,7 @@ else
         $rmodel = 0;
 		for($d = 2; $d < $imdfsz; $d++)
 		{
-			$gttcl = split("\t", trim($opentmp[$d]));					
+			$gttcl = explode("\t", trim($opentmp[$d]));					
 			if($imd[0] == $gttcl[0])
 			{
 				$rindex = $itemserial;
@@ -315,7 +315,7 @@ else
 			$itemserial = 0;		
 			for($d = 2; $d < $imdfsz; $d++)
 			{
-				$gttcl = split("\t", trim($opentmp[$d]));				
+				$gttcl = explode("\t", trim($opentmp[$d]));				
 				if($needitem[$c] == $gttcl[0])
 				{
 					$itindex[$c] = $itemserial;
@@ -361,7 +361,7 @@ else
 	$schet1 = sizeof($file_load1);		
 	for($i = 2; $i < $schet1; $i++)
 	{
-		$cmb = split("\t", trim($file_load1[$i]));
+		$cmb = explode("\t", trim($file_load1[$i]));
 		$neednum = 0;
 		$ittype = array(0=>"-1",1=>"-1",2=>"-1",3=>"-1",4=>"-1");
 		$itindex = array(0=>"0",1=>"0",2=>"0",3=>"0",4=>"0");
@@ -418,7 +418,7 @@ else
         $rindex = 0;
 		for($d = 2; $d < $imdfsz; $d++)
 		{
-			$gttcl = split("\t", trim($opentmp[$d]));		
+			$gttcl = explode("\t", trim($opentmp[$d]));		
 			if($cmb[0]==$gttcl[0]){
 				$rindex = $itemserial;
 				break;	
@@ -445,7 +445,7 @@ else
 			$itemserial = 0;		
 			for($d = 2; $d < $imdfsz; $d++)
 			{
-				$gttcl = split("\t", trim($opentmp[$d]));			
+				$gttcl = explode("\t", trim($opentmp[$d]));			
 				if($needitem[$c] == $gttcl[0])
 				{
 					$itindex[$c] = $itemserial;;
@@ -476,7 +476,7 @@ if(!$stop)
 		if(defined('GU'))
 			$index = pack("c", $a);
 		else
-			$index = pack("c", $indexarr[$a]);
+			$index = pack("c", $indexarr[$a] ?? 0);
 		fwrite($fp, "$index");
 		fwrite($fp, "$smthhex");		
 		if(!file_exists($installpath."in\\Item.edf\\".$patharr[$a]."\\".$a.$incname))
@@ -488,7 +488,7 @@ if(!$stop)
 		$decrypt = $installpath."in\\Item.edf\\".$patharr[$a]."\\".$a.$incname;
 		$struct_load = file($decrypt, FILE_SKIP_EMPTY_LINES);
 		$schet = sizeof($struct_load);
-		$str_row = split("\t", trim($struct_load[0]));	
+		$str_row = explode("\t", trim($struct_load[0]));	
 
 		echo ($a + 1)." / 46 (".$a.$incname.") started...";
 		flush();	
@@ -549,7 +549,7 @@ if(!$stop)
 		$countshoes = 0;
 		$countbullets = 0;
 		$countweapon = 0;
-		$frow = split("\t", trim($fload[$i]));
+		$frow = explode("\t", trim($fload[$i]));
 		$masv = str_split($frow[0], 2);
 		while($masv[0] == "iw" && $i != $fschet)
 		{
@@ -562,7 +562,7 @@ if(!$stop)
 			$offgloves++;
 			$offshoes++;
 			$offbullets++;
-			$frow = split("\t", trim($fload[$i]));
+			$frow = explode("\t", trim($fload[$i]));
 			$masv = str_split($frow[0], 2);
 		}
 		while($masv[0] == "id" && $i != $fschet)
@@ -575,7 +575,7 @@ if(!$stop)
 			$offgloves++;
 			$offshoes++;
 			$offbullets++;
-			$frow = split("\t", trim($fload[$i]));
+			$frow = explode("\t", trim($fload[$i]));
 			$masv = str_split($frow[0], 2);
 		}
 		while($masv[0] == "ih" && $i != $fschet)
@@ -587,7 +587,7 @@ if(!$stop)
 			$offgloves++;
 			$offshoes++;
 			$offbullets++;
-			$frow = split("\t", trim($fload[$i]));
+			$frow = explode("\t", trim($fload[$i]));
 			$masv = str_split($frow[0], 2);
 		}
 		while($masv[0] == "iu" && $i != $fschet)
@@ -598,7 +598,7 @@ if(!$stop)
 			$offgloves++;
 			$offshoes++;
 			$offbullets++;
-			$frow = split("\t", trim($fload[$i]));
+			$frow = explode("\t", trim($fload[$i]));
 			$masv = str_split($frow[0], 2);
 		}
 		while($masv[0] == "il" && $i != $fschet)
@@ -608,7 +608,7 @@ if(!$stop)
 			$offgloves++;
 			$offshoes++;
 			$offbullets++;
-			$frow = split("\t", trim($fload[$i]));
+			$frow = explode("\t", trim($fload[$i]));
 			$masv = str_split($frow[0], 2);
 		}
 		while($masv[0] == "ig" && $i != $fschet)
@@ -617,7 +617,7 @@ if(!$stop)
 			$countgloves++;
 			$offshoes++;
 			$offbullets++;
-			$frow = split("\t", trim($fload[$i]));
+			$frow = explode("\t", trim($fload[$i]));
 			$masv = str_split($frow[0], 2);
 		}
 		while($masv[0] == "is" && $i != $fschet)
@@ -625,14 +625,14 @@ if(!$stop)
 			$i++;
 			$countshoes++;
 			$offbullets++;
-			$frow = split("\t", trim($fload[$i]));
+			$frow = explode("\t", trim($fload[$i]));
 			$masv = str_split($frow[0], 2);
 		}
 		while($masv[0] == "ib" && $i != $fschet)
 		{
 			$i++;
 			$countbullets++;
-			$frow = split("\t", trim($fload[$i]));
+			$frow = explode("\t", trim($fload[$i]));
 			$masv = str_split($frow[0], 2);
 		}
 		fwrite($fp, pack("i", 0).pack("i", $offupper).pack("i", $offlower).pack("i", $offgloves).pack("i", $offshoes).pack("i", $offhead).pack("i", 0).pack("i", $offshield).pack("i", 0).pack("i", 0).pack("i", 0).pack("i", $offbullets).pack("@136"));
@@ -746,7 +746,7 @@ if(defined('GU'))
 		fwrite($fp, "$schethex");
 		for($j=2; $j < $schet; $j++)
 		{			
-			$temporary = split("\t", trim($struct_load[$j],"\t\r\n\x22"));
+			$temporary = explode("\t", trim($struct_load[$j],"\t\r\n\x22"));
 			$resulthex=pack("a64", $temporary[1]);
 			fwrite($fp, $resulthex);
 		}
@@ -770,7 +770,7 @@ if(defined('GU'))
 		fwrite($fp, "$schethex");
 		for($j=2; $j < $schet; $j++)
 		{			
-			$temporary = split("\t", trim($struct_load[$j],"\t\r\n\x22"));
+			$temporary = explode("\t", trim($struct_load[$j],"\t\r\n\x22"));
 			$len = strlen(trim(str_replace("\x22\x22\x22\x22", "\x22\x22", $temporary[1]), "\x22"));
             if($len > 255)
                 echo "<br>Warning! Exceeded max length of 255 symbols at item description. Tail of string wont be shown in game: ROW:".($j+1)."' SIZE:". $len.".";
@@ -794,7 +794,7 @@ if(defined('GU'))
 	fwrite($fp, "$schethex");
 	for($j=2; $j < $schet; $j++)
 	{		
-		$temporary = split("\t", trim($struct_load[$j],"\t\r\n\x22"));
+		$temporary = explode("\t", trim($struct_load[$j],"\t\r\n\x22"));
 		$len = strlen(trim(str_replace("\x22\x22\x22\x22", "\x22\x22", $temporary[1]), "\x22"));
 		$len += 1;
 		$resulthex = pack("i", ($j-2)).pack("a64", $temporary[0]).pack("i", $len).pack("a".$len, trim(str_replace("\x22\x22\x22\x22", "\x22\x22", $temporary[1]), "\x22"));

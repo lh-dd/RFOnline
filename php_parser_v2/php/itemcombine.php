@@ -28,19 +28,22 @@ if(!$stop){
 	fwrite($fo, pack("i", 124));
 	$j = 0;
 	for($i = 2; $i < $linknum; $i++){
-		$trow = split("\t", trim($lstuff[$i]));
+		$trow = explode("\t", trim($lstuff[$i]));
 		$linkarr[$trow[0]]= $j;
-		$k = 1;
-		while($trow[$k] != "-1" && $k < 101){		
-			$k++;
+		$count = 0;
+		for ($k = 1; $k < 101; $k++) {
+			if (!isset($trow[$k]) || $trow[$k] === "-1") {
+				break;
+			}
+			$count++;
 		}
-		$linksiz[$j] = ($k - 1);
+		$linksiz[$j] = $count;
 		$j++;
 	}
 	$a=0;
     $nextpercent = 10;
 	for($i = 2; $i < $tabnum1; $i++){
-		$trow = split("\t", trim($table1[$i]));
+		$trow = explode("\t", trim($table1[$i]));
 		fwrite($fo, pack("i", $a).pack("i", $trow[3]).pack("i", $trow[1]).stb($trow[2]));
 		$matn = 0;
 		for($b = 6; $b < 19; $b = $b + 3){
@@ -75,7 +78,7 @@ if(!$stop){
 	$a=0;
     $nextpercent = 10;
 	for($i = 2; $i < $tabnum2; $i++){
-		$trow = split("\t", trim($table2[$i]));
+		$trow = explode("\t", trim($table2[$i]));
 		fwrite($fo, pack("i", $a).pack("i", $trow[3]).pack("i", $trow[1]).stb($trow[2]));
 		$matn = 0;
 		for($b = 6; $b < 19; $b = $b + 3){
@@ -111,7 +114,7 @@ if(!$stop){
 	fwrite($fo, pack("i", 1208));
 	$a = 0;
 	for($i = 2; $i < $linknum; $i++){
-		$trow = split("\t", trim($lstuff[$i]));
+		$trow = explode("\t", trim($lstuff[$i]));
 		fwrite($fo, pack("i", $a).pack("i", $linksiz[$a]));
 		for($j = 1; $j < 101; $j++){
 			fwrite($fo, lcode($trow[$j]));
