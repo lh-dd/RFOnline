@@ -27,8 +27,8 @@ $stop = false;
 	for($i=2; $i < $schet; $i++)
 	{
 		$skip = 0;
-		$row = split("\t", trim($cpsfile[$i]));
-		$ndrow = split("\t", trim($cpndfile[$i]));
+		$row = explode("\t", trim($cpsfile[$i]));
+		$ndrow = explode("\t", trim($cpndfile[$i]));
 		fwrite($cpfw, $row[0]."\t".$row[2]."\t".$row[1]."\t".$row[9]."\t".$row[3]."\t".$row[8]."\t".$row[5]."\t".$row[4]."\t".$row[7]."\t".$row[6]."\t");
 		if($row[33]!=0)
 			fwrite($cpfw, "0\t".$row[35]."\t".$row[35]."\t".$row[35]."\t".$row[35]."\t".$row[35]."\t".$row[35]."\t".$row[35]."\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t");
@@ -126,8 +126,8 @@ for($ii = 1; $ii < 5; $ii ++)
 	for($i=2; $i < $schet; $i++)
 	{
 		$skip = 0;
-		$row = split("\t", trim($cpsfile[$i]));
-		$ndrow = split("\t", trim($cpndfile[$i]));
+		$row = explode("\t", trim($cpsfile[$i]));
+		$ndrow = explode("\t", trim($cpndfile[$i]));
 		switch($ii)
 		{
 		case 3:
@@ -258,7 +258,7 @@ if(defined('GU'))
 			fwrite($fp, "$blockhex");
 			for($j=2; $j < $schet; $j++)
 			{			
-				$temporary = split("\t", trim($struct_load[$j],"\t\r\n"));
+				$temporary = explode("\t", trim($struct_load[$j],"\t\r\n"));
 				$resulthex=pack("a32", $temporary[9]).pack("a512", $temporary[161]);
 				fwrite($fp, $resulthex);
 			}

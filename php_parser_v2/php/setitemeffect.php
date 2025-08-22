@@ -1,6 +1,8 @@
 <?php
 include './include.php'; // necessary include
 
+$stop = false;
+
 if(!$stop)
 {
 	if(defined('GU'))
@@ -14,7 +16,7 @@ if(!$stop)
 	fwrite($itseteff, pack("i", $size));
 	$nindex = 0;
 	for($i = 2; $i < $count; $i ++){
-		$row = split("\t", trim($load[$i]));
+		$row = explode("\t", trim($load[$i]));
 		$nui = 0;
 		for($j = 2 ; $j < 14; $j++){
 			if($row[$j] == "-1")

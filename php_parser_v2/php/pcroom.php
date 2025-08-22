@@ -20,7 +20,7 @@ $file_load1 = file($file1, FILE_SKIP_EMPTY_LINES);
 $schet1 = sizeof($file_load1);
 for($i = 2; $i < $schet1; $i++)
 {
-	$pcr = split("\t", trim($file_load1[$i]));
+	$pcr = explode("\t", trim($file_load1[$i]));
 	if(defined('GU'))
 		fwrite($fo, "\r\n".$pcr[1]."\t");
 	else
