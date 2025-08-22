@@ -98,7 +98,12 @@ for($i=0;$i < $count[1];$i++){
 	$un3 = unpack("i", $re3);
 	$un4 = unpack("i", $re4);
 	$un5 = unpack("i", $re5);
-	fwrite($fp, $un1[1]."\t");
+	$val = $un1[1];
+	if (is_finite($val) && abs($val) >= 1e12) {
+    	fwrite($fp, sprintf("%.11E\t", $val)); //use php 5 style
+	} else {
+    	fwrite($fp, $val."\t");
+	}
 	fwrite($fp, $un2[1]."\t");
 	fwrite($fp, $un3[1]."\t");
 	fwrite($fp, $un4[1]."\t");
@@ -338,7 +343,7 @@ for($i = 0; $i < $param; $i++){
 	$pos = 0;
 	$findme = "\x00";
 	$pos = strpos($rea, $findme);
-	$pos = ($pos == 0) ? "*" : $pos;
+	$pos = ($pos === false) ? strlen($rea) : $pos;
 	$unp = unpack("a".$pos, $rea);
 	$trans = array("\n" => " ");
 	$result = strtr($unp[1], $trans);
