@@ -92,7 +92,7 @@ for($i=0;$i < $count[1];$i++){
 	for($j=0;$j < 7;$j++){
 		$data[0] = fread($fo, 4);
 		$number[0] = unpack("f", $data[0]);
-		fwrite($fp, $number[0][1]."\t");
+		fwrite($fp, sprintf("%.12g\t", $number[0][1])); //use php 5 style: up to 12 significant digits
 	}
 	}
 	$data[0] = fread($fo, 4);
@@ -292,7 +292,7 @@ for($i=0;$i < $count[1];$i++){
 	for($j=0;$j < 7;$j++){
 		$data[0] = fread($fo, 4);
 		$number[0] = unpack("f", $data[0]);
-		fwrite($fp, $number[0][1]."\t");
+		fwrite($fp, sprintf("%.12g\t", $number[0][1])); //use php 5 style: up to 12 significant digits
 	}
 	}
 	$data[0] = fread($fo, 4);
@@ -502,7 +502,7 @@ for($i=0;$i < $count[1];$i++){
 	for($j=0;$j < 7;$j++){
 		$data[0] = fread($fo, 4);
 		$number[0] = unpack("f", $data[0]);
-		fwrite($fp, $number[0][1]."\t");
+		fwrite($fp, sprintf("%.12g\t", $number[0][1])); //use php 5 style: up to 12 significant digits
 	}
 	}
 	$data[0] = fread($fo, 4);
@@ -712,7 +712,7 @@ for($i=0;$i < $count[1];$i++){
 	for($j=0;$j < 7;$j++){
 		$data[0] = fread($fo, 4);
 		$number[0] = unpack("f", $data[0]);
-		fwrite($fp, $number[0][1]."\t");
+		fwrite($fp, sprintf("%.12g\t", $number[0][1])); //use php 5 style: up to 12 significant digits
 	}
 	}
 	$data[0] = fread($fo, 4);
@@ -921,7 +921,7 @@ for($i=0;$i < $count[1];$i++){
 	for($j=0;$j < 7;$j++){
 		$data[0] = fread($fo, 4);
 		$number[0] = unpack("f", $data[0]);
-		fwrite($fp, $number[0][1]."\t");
+		fwrite($fp, sprintf("%.12g\t", $number[0][1])); //use php 5 style: up to 12 significant digits
 	}
 	}
 	$data[0] = fread($fo, 4);

@@ -31,7 +31,7 @@ for($a=0;$a < $count[1]; $a++){
 	$id2 = unpack("a".$pos, $nid2);
 	$height = unpack("f", $fheight);
 	$trans = array("."=>",");
-	$height[1] = strtr($height[1], $trans);
+	$height[1] = strtr(sprintf('%.12g', $height[1]), $trans); //use php 5 style: up to 12 significant digits
 	fseek($fp, 1614, SEEK_CUR);
 	fwrite($file, "$race[1]\t");
 	fwrite($file, "$height[1]\t");
