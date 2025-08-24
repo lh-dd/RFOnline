@@ -22,7 +22,7 @@ if(!$stop)
 			fwrite($fw, pack("i", ($schet-2)).pack("i", $bsize));
 			for($j = 2; $j < $schet; $j++)
 			{
-				$row = split("\t", trim($fo[$j]));
+				$row = explode("\t", trim($fo[$j]));
 				fwrite($fw, pack("i", ($j-2)));
 				if(strlen($row[0]) == 7)
 				{
@@ -78,7 +78,7 @@ if(!$stop)
 		$decrypt = $installpath."in\\Quest.edf\\cliquest0.txt";
 		$struct_load = file($decrypt, FILE_SKIP_EMPTY_LINES);
 		$schet = sizeof($struct_load) + 10;
-		$str_row = split("\t", trim($struct_load[0]));
+		$str_row = explode("\t", trim($struct_load[0]));
 		$block = strsize($str_row);
 		$schethex = pack("i", $schet);
 		fwrite($fw, "$schethex");
@@ -132,7 +132,7 @@ if(!$stop)
 		$decrypt = $installpath."in\\Quest.edf\\QuestItemCli.txt";
 		$struct_load = file($decrypt, FILE_SKIP_EMPTY_LINES);
 		$schet = sizeof($struct_load) - 2;
-		$str_row = split("\t", trim($struct_load[0]));
+		$str_row = explode("\t", trim($struct_load[0]));
 		$block = strsize($str_row) + 4;
 		$schethex = pack("i", $schet);
 		fwrite($fw, "$schethex");
@@ -159,7 +159,7 @@ if(!$stop)
 			$decrypt = $installpath."in\\Quest.edf\\QuestOrder".$i.".txt";
 			$struct_load = file($decrypt, FILE_SKIP_EMPTY_LINES);
 			$schet = sizeof($struct_load) - 2;
-			$str_row = split("\t", trim($struct_load[0]));
+			$str_row = explode("\t", trim($struct_load[0]));
 			$block = strsize($str_row);
 			$schethex = pack("i", $schet);
 			fwrite($fw, "$schethex");
@@ -190,7 +190,7 @@ if(defined('GU'))
 		fwrite($fw, "$blockhex");
 		for($j=2; $j < $schet; $j++)
 		{			
-			$temporary = split("\t", trim($struct_load[$j],"\t\r\n"));
+			$temporary = explode("\t", trim($struct_load[$j],"\t\r\n"));
 			$resulthex=pack("a32", $temporary[2]);
 			fwrite($fw, $resulthex);
 		}
@@ -204,12 +204,12 @@ if(defined('GU'))
 		$bsize =16;
 		fwrite($fw, pack("i", ($schet-2)).pack("i", $bsize));	
 		for($j = 2; $j < $schet; $j++){
-			$temporary = split("\t", trim($fo[$j]));
-			fwrite($fw, pack("i", $temporary[0]).pack("i", 0).pack("i", (strlen($temporary[1])+1)).pack("i", 0));			
+			$temporary = explode("\t", trim($fo[$j]));
+			fwrite($fw, pack("i", $temporary[0]).pack("i", 0).pack("i", (strlen($temporary[1] ?? '')+1)).pack("i", 0));
 		}
 		for($j = 2; $j < $schet; $j++){
-			$temporary = split("\t", trim($fo[$j]));
-			fwrite($fw, pack("a".(strlen($temporary[1])+1), $temporary[1]));			
+			$temporary = explode("\t", trim($fo[$j]));
+			fwrite($fw, pack("a".(strlen($temporary[1] ?? '')+1), $temporary[1] ?? ''));			
 		}
 	}
 	fclose($fw);
