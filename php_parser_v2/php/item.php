@@ -632,6 +632,7 @@ if(!$stop)
 		{
 			$i++;
 			$countbullets++;
+			if (!isset($fload[$i])) break;
 			$frow = explode("\t", trim($fload[$i]));
 			$masv = str_split($frow[0], 2);
 		}
