@@ -1,92 +1,140 @@
 #include <windows.h>
 #include <iostream>
+#include <fstream>
+#include <mutex>
 #include "include/MinHook.h"
 #include <time.h>
+#include <string>
 
-// Original function pointers
-typedef unsigned int(WINAPIV* tGetKorLocalTime)();
-typedef unsigned int(WINAPIV* tGetConnectTime_AddBySec)(int);
+typedef unsigned int(WINAPI* tGetKorLocalTime)();
+typedef unsigned int(WINAPI* tGetConnectTime_AddBySec)(int);
 
 tGetKorLocalTime oGetKorLocalTime = nullptr;
 tGetConnectTime_AddBySec oGetConnectTime_AddBySec = nullptr;
 
-// Hooked function implementations
-unsigned int WINAPIV hkGetKorLocalTime() {
-    char szDate[32], szTime[32];
-    _strdate(szDate);
-    _strtime(szTime);
+static std::ofstream g_LogFile;
+static std::mutex g_LogMutex;
 
-    char szLocalTime[32];
-    // Year..(6, 7)
-    szLocalTime[0] = szDate[6];
-    szLocalTime[1] = szDate[7];
-
-    // Month..(0, 1)
-    szLocalTime[2] = szDate[0];
-    szLocalTime[3] = szDate[1];
-
-    // Day..(3, 4)
-    szLocalTime[4] = szDate[3];
-    szLocalTime[5] = szDate[4];
-
-    // Second..(0, 1)
-    szLocalTime[6] = szTime[0];
-    szLocalTime[7] = szTime[1];
-
-    // Minute..(3, 4)
-    szLocalTime[8] = szTime[3];
-    szLocalTime[9] = szTime[4];
-
-    szLocalTime[10] = NULL;
-    return (unsigned int)atoll(szLocalTime);
+void Log(const std::string& msg) {
+    std::lock_guard<std::mutex> lock(g_LogMutex);
+    if (g_LogFile.is_open()) {
+        g_LogFile << msg << std::endl;
+        g_LogFile.flush();
+    }
 }
 
-unsigned int WINAPIV hkGetConnectTime_AddBySec(int iSec) {
-    struct tm* Tm;
-    time_t origTime, afterTime;
-    ::time(&origTime);
-    Tm = ::localtime(&origTime);
-    Tm->tm_sec += iSec;
-    afterTime = mktime(Tm);
+unsigned int WINAPI hkGetKorLocalTime() {
+    time_t now = time(nullptr);
+    struct tm tm {};
 
-    char Dest[32];
-    sprintf(Dest, "%01d%02d%02d%02d%02d",
-        (unsigned int)(Tm->tm_year - 100),
-        (unsigned int)(Tm->tm_mon + 1),
-        (unsigned int)(Tm->tm_mday),
-        (unsigned int)(Tm->tm_hour),
-        (unsigned int)(Tm->tm_min));
+    if (localtime_s(&tm, &now) != 0) {
+        Log("[datefix] hkGetKorLocalTime: localtime_s failed");
+        return 0;
+    }
 
-    return (unsigned int)atoll(Dest);
+    unsigned long long result =
+        (tm.tm_year % 100) * 100000000ULL +
+        (tm.tm_mon + 1) * 1000000ULL +
+        tm.tm_mday * 10000ULL +
+        tm.tm_hour * 100ULL +
+        tm.tm_min;
+
+    unsigned int finalResult = (result > UINT_MAX) ? 0 : static_cast<unsigned int>(result);
+
+    Log("[datefix] hkGetKorLocalTime called -> " + std::to_string(finalResult));
+    return finalResult;
 }
 
-// Hook setup function
+unsigned int WINAPI hkGetConnectTime_AddBySec(int iSec) {
+    time_t origTime;
+    time(&origTime);
+
+    struct tm tm {};
+    if (localtime_s(&tm, &origTime) != 0) {
+        Log("[datefix] hkGetConnectTime_AddBySec: localtime_s failed");
+        return 0;
+    }
+
+    tm.tm_sec += iSec;
+    time_t adjusted = mktime(&tm);
+    if (adjusted == -1) {
+        Log("[datefix] hkGetConnectTime_AddBySec: mktime failed");
+        return 0;
+    }
+    if (localtime_s(&tm, &adjusted) != 0) {
+        Log("[datefix] hkGetConnectTime_AddBySec: localtime_s failed");
+        return 0;
+    }
+
+    unsigned long long result =
+        (tm.tm_year % 100) * 100000000ULL +
+        (tm.tm_mon + 1) * 1000000ULL +
+        tm.tm_mday * 10000ULL +
+        tm.tm_hour * 100ULL +
+        tm.tm_min;
+
+    unsigned int finalResult = (result > UINT_MAX) ? 0 : static_cast<unsigned int>(result);
+
+    Log("[datefix] hkGetConnectTime_AddBySec called (" + std::to_string(iSec) + "s) -> " + std::to_string(finalResult));
+    return finalResult;
+}
+
+static bool g_HooksInitialized = false;
+
 void HookFunctions() {
+    if (g_HooksInitialized) return;
+
     if (MH_Initialize() != MH_OK) {
+        Log("[datefix] MH_Initialize failed");
         return;
     }
 
-    // Hook GetKorLocalTime
     if (MH_CreateHook((LPVOID)0x140480680, &hkGetKorLocalTime, (LPVOID*)&oGetKorLocalTime) == MH_OK) {
         MH_EnableHook((LPVOID)0x140480680);
+        Log("[datefix] Hooked GetKorLocalTime successfully");
+    }
+    else {
+        Log("[datefix] Failed to hook GetKorLocalTime");
     }
 
-    // Hook GetConnectTime_AddBySec
     if (MH_CreateHook((LPVOID)0x14043CB80, &hkGetConnectTime_AddBySec, (LPVOID*)&oGetConnectTime_AddBySec) == MH_OK) {
         MH_EnableHook((LPVOID)0x14043CB80);
+        Log("[datefix] Hooked GetConnectTime_AddBySec successfully");
     }
+    else {
+        Log("[datefix] Failed to hook GetConnectTime_AddBySec");
+    }
+
+    g_HooksInitialized = true;
+    Log("[datefix] Hooks initialized");
 }
 
-// Exported function for use with CFF Explorer Import Adder
 extern "C" __declspec(dllexport) void datefix() {
     HookFunctions();
+    Log("[datefix] datefix() called");
 }
 
-// DLL Entry Point
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
         DisableThreadLibraryCalls(hModule);
+
+        char path[MAX_PATH];
+        GetModuleFileNameA(hModule, path, MAX_PATH);
+        std::string logPath = std::string(path) + ".log";
+
+        g_LogFile.open(logPath, std::ios::out | std::ios::app);
+        if (g_LogFile.is_open()) {
+            Log("[datefix] Log file opened: " + logPath);
+        }
+
         HookFunctions();
+        Log("[datefix] DLL_PROCESS_ATTACH -> hooks set");
+    }
+    else if (ul_reason_for_call == DLL_PROCESS_DETACH) {
+        Log("[datefix] DLL_PROCESS_DETACH -> cleaning up");
+        if (g_LogFile.is_open()) {
+            g_LogFile.close();
+        }
     }
     return TRUE;
 }
