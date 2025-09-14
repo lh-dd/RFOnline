@@ -1,10 +1,14 @@
 #include <windows.h>
-#include <iostream>
-#include <fstream>
-#include <mutex>
 #include "include/MinHook.h"
 #include <time.h>
+
+#ifdef DATEFIX_ENABLE_LOG
+#include <fstream>
+#include <mutex>
 #include <string>
+#endif
+
+//#define DATEFIX_ENABLE_LOG
 
 typedef unsigned int(WINAPI* tGetKorLocalTime)();
 typedef unsigned int(WINAPI* tGetConnectTime_AddBySec)(int);
@@ -12,6 +16,7 @@ typedef unsigned int(WINAPI* tGetConnectTime_AddBySec)(int);
 tGetKorLocalTime oGetKorLocalTime = nullptr;
 tGetConnectTime_AddBySec oGetConnectTime_AddBySec = nullptr;
 
+#ifdef DATEFIX_ENABLE_LOG
 static std::ofstream g_LogFile;
 static std::mutex g_LogMutex;
 
@@ -22,6 +27,9 @@ void Log(const std::string& msg) {
         g_LogFile.flush();
     }
 }
+#else
+#define Log(x) ((void)0)
+#endif
 
 unsigned int WINAPI hkGetKorLocalTime() {
     time_t now = time(nullptr);
@@ -118,6 +126,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
         DisableThreadLibraryCalls(hModule);
 
+#ifdef DATEFIX_ENABLE_LOG
         char path[MAX_PATH];
         GetModuleFileNameA(hModule, path, MAX_PATH);
         std::string logPath = std::string(path) + ".log";
@@ -126,15 +135,19 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         if (g_LogFile.is_open()) {
             Log("[datefix] Log file opened: " + logPath);
         }
+#endif
 
         HookFunctions();
         Log("[datefix] DLL_PROCESS_ATTACH -> hooks set");
     }
     else if (ul_reason_for_call == DLL_PROCESS_DETACH) {
         Log("[datefix] DLL_PROCESS_DETACH -> cleaning up");
+		
+#ifdef DATEFIX_ENABLE_LOG
         if (g_LogFile.is_open()) {
             g_LogFile.close();
         }
+#endif
     }
     return TRUE;
 }
