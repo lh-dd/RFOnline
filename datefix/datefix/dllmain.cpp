@@ -1,3 +1,5 @@
+//#define DATEFIX_ENABLE_LOG
+
 #include <windows.h>
 #include "include/MinHook.h"
 #include <time.h>
@@ -7,8 +9,6 @@
 #include <mutex>
 #include <string>
 #endif
-
-//#define DATEFIX_ENABLE_LOG
 
 typedef unsigned int(WINAPI* tGetKorLocalTime)();
 typedef unsigned int(WINAPI* tGetConnectTime_AddBySec)(int);
