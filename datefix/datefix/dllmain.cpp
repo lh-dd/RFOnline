@@ -54,11 +54,10 @@ unsigned int WINAPI hkGetKorLocalTime() {
 }
 
 unsigned int WINAPI hkGetConnectTime_AddBySec(int iSec) {
-    time_t origTime;
-    time(&origTime);
-
+    time_t now = time(nullptr);
     struct tm tm {};
-    if (localtime_s(&tm, &origTime) != 0) {
+	
+    if (localtime_s(&tm, &now) != 0) {
         Log("[datefix] hkGetConnectTime_AddBySec: localtime_s failed");
         return 0;
     }
