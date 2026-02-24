@@ -33,3 +33,34 @@ replace with:
 53686F705F25642E707263		Shop_%d.prc	(1 occurence)
 replace with:
 53686F705F25752E707263		Shop_%u.prc
+
+
+4C617374436F6E6E54696D653D2564		LastConnTime=%d	(1 occurence)
+replace with:
+4C617374436F6E6E54696D653D2575		LastConnTime=%u
+
+
+5B4C617374436F6E6E54696D655D3D202564	[LastConnTime]= %d	(1 occurence)
+replace with:
+5B4C617374436F6E6E54696D655D3D202575	[LastConnTime]= %u
+
+
+4C6173744C6F676F757454696D653D2564	LastLogoutTime=%d	(1 occurence)
+replace with:
+4C6173744C6F676F757454696D653D2575	LastLogoutTime=%u
+
+
+Dual Potion:
+
+At address 0x0048DE6B	(1 occurence)
+
+0400
+replace with:
+E5FF
+
+
+At address 0x004C3EB2	(1 occurence)
+
+0400
+replace with:
+E5FF
