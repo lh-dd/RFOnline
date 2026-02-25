@@ -64,3 +64,10 @@ At address 0x004C3EB2	(1 occurence)
 0400
 replace with:
 E5FF
+
+
+At address 0x004C7214	(1 occurence)
+
+74
+replace with:
+75
